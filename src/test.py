@@ -59,7 +59,7 @@ def generate_gcode_file(img):
                 if val == 0:  # Values are 255 or 0
                     file.write("G0 X{} F{} ;\n".format(x_displacement, MOVEMENT_SPEED))
                     # Mark a dot
-                    file.write("G1 Z{} F{} ;\n".format(10, MOVEMENT_SPEED))
+                    file.write("G1 Z{} F{} ;\n".format(-10, MOVEMENT_SPEED))
                     file.write("G1 Z{} F{} ;\n".format(0, MOVEMENT_SPEED))
 
         # Program finished; return to home position
