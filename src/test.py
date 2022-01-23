@@ -46,8 +46,8 @@ def generate_gcode_file(img):
 
         y_counter = 0
         for y_displacement in range(img.shape[0]):
-            file.write("G0 Y{}".format(y_displacement))
-
+            file.write("G0 Y{} ;\n".format(y_displacement))
+ 
             # Compute range (prevent unnecessary movement to the other edge)
             if y_counter % 2 == 0:
                 rangeToUse = range(img.shape[1])
@@ -55,10 +55,9 @@ def generate_gcode_file(img):
                 rangeToUse = range(img.shape[1], 0, -1)
 
             for x_displacement in rangeToUse:
-                file.write("G0 X{} ;\n".format(x_displacement))
-
                 val = img[y_displacement, x_displacement]
                 if val == 0:  # Values are 255 or 0
+                    file.write("G0 X{} ;\n".format(x_displacement))
                     # Mark a dot
                     file.write("G1 Z{} ;\n".format(10))
                     file.write("G1 Z{} ;\n".format(0))
