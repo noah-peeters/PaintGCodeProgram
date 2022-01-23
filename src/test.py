@@ -4,7 +4,7 @@ from cv2 import resize
 import numpy as np
 
 
-MAX_WORKING_LENGTH = 2000  # Length of working area (mm)
+MAX_WORKING_LENGTH = 830  # Length of working area (mm)
 PAINT_DOT_SIZE = 3  # Size (length/width) of paint dot; must be ODD (mm)
 MOVEMENT_SPEED = 1200  # Movement speed in mm/min
 
