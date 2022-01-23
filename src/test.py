@@ -1,13 +1,14 @@
 import math
 import cv2
+from cv2 import resize
 import numpy as np
 
 
-MAX_WORKING_LENGTH = 1000  # Length of working area (mm)
+MAX_WORKING_LENGTH = 2000  # Length of working area (mm)
 PAINT_DOT_SIZE = 3  # Size (length/width) of paint dot; must be ODD (mm)
 MOVEMENT_SPEED = 1200  # Movement speed in mm/min
 
-# Resize image to MAX_WORKING_LENGTH
+# Resize image so largest axis becomes MAX_WORKING_LENGTH
 def resize_image(img):
     # Use largest axis for resizing image
     largest_axis = 0
@@ -35,51 +36,57 @@ def downsample_image(img):
     return new_img
 
 
-# Creates gcode file from every pixel in the image
+# Creates gcode file from every pixel in the image (assumes image is already correctly sized)
 def generate_gcode_file(img):
-    with open("GCodeTest.gcode", "x") as file:
-        # Home all motors
-        file.write("G28 ;\n")
-        # Absolute positioning mode
-        file.write("G90 ;\n")
+    with open("GCodeTest.gcode", "w") as file:
+        # Setup
+        file.write("G28 ;\n")  # Home all motors
+        file.write("G90 ;\n")  # Absolute positioning mode
+        file.write("G21 ;\n")  # Set units to mm
 
-        # Increment (keeping kernel size in mind)
-        increment = PAINT_DOT_SIZE - 1
+        y_counter = 0
+        for y_displacement in range(img.shape[0]):
+            file.write("G0 Y{}".format(y_displacement))
 
-        for y_index in range(0, img.shape[0], increment):
-            for x_index in range(0, img.shape[1], increment):
-                x_displacement = x_index
-                y_displacement = y_index
+            # Compute range (prevent unnecessary movement to the other edge)
+            if y_counter % 2 == 0:
+                rangeToUse = range(img.shape[1])
+            else:
+                rangeToUse = range(img.shape[1], 0, -1)
 
-                # TODO: "Place" pixel in top-left or top-right of kernel and compute average color value from kernel
+            for x_displacement in rangeToUse:
+                file.write("G0 X{} ;\n".format(x_displacement))
 
-                # TODO: Compute displacement offset for GCode dot
+                val = img[y_displacement, x_displacement]
+                if val == 0:  # Values are 255 or 0
+                    # Mark a dot
+                    file.write("G1 Z{} ;\n".format(10))
+                    file.write("G1 Z{} ;\n".format(0))
 
-                file.write(
-                    "G1 X{} Y{} F{} ;\n".format(
-                        x_displacement, y_displacement, MOVEMENT_SPEED
-                    )
-                )
+        # Program finished; return to home position
         file.write("G28 ;\n")
 
 
 img = cv2.imread("monkey.jpg")
 print(img.shape)
 
-_, black_white_img = cv2.threshold(
-    cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU
-)
-
 resized_img = resize_image(img)
 print(resized_img.shape)
 
-downsampled_img = downsample_image(resized_img)
-print(downsampled_img.shape)
+_, black_white_img = cv2.threshold(
+    cv2.cvtColor(resized_img, cv2.COLOR_BGR2GRAY),
+    128,
+    255,
+    cv2.THRESH_BINARY | cv2.THRESH_OTSU,
+)
 
-generate_gcode_file(downsampled_img)
+# downsampled_img = downsample_image(resized_img)
+# print(downsampled_img.shape)
+
+generate_gcode_file(black_white_img)
 
 cv2.imshow("Image", img)
 cv2.imshow("Black & White Image", black_white_img)
 cv2.imshow("Resized Image", resized_img)
-cv2.imshow("Downsampled Image", downsampled_img)
+# cv2.imshow("Downsampled Image", downsampled_img)
 cv2.waitKey(0)
