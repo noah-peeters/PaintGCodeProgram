@@ -1,12 +1,10 @@
 import math
 import cv2
-from cv2 import resize
-import numpy as np
+from httpx import patch
 
-
-MAX_WORKING_LENGTH = 800  # Length of working area (mm)
-PAINT_DOT_SIZE = 3  # Size (length/width) of paint dot; must be ODD (mm)
-MOVEMENT_SPEED = 1300  # Movement speed in mm/min (max is 1500)
+MAX_WORKING_LENGTH = 100  # Longest length of working area (mm)
+PAINT_DOT_DIAMETER = 3  # Diameter of paint dot; must be ODD (mm)
+MOVEMENT_SPEED = 1400  # Movement speed in mm/min (max is 1500)
 
 # Resize image so largest axis becomes MAX_WORKING_LENGTH
 def resize_image(img):
@@ -26,14 +24,23 @@ def resize_image(img):
     )
 
 
-# Downsample image according to PAINT_DOT_SIZE
-def downsample_image(img):
-    decrease_factor = PAINT_DOT_SIZE - 1
-    new_img = img
-    for _ in range(decrease_factor):
-        # Blur image and downsample (Gaussian Pyramid)
-        new_img = cv2.pyrDown(img)
-    return new_img
+# Get black/white pixel value for patch (count separate occurences and return most)
+def get_pixel_patch_value(patch):
+    blackCount = 0
+    whiteCount = 0
+    for y in range(PAINT_DOT_DIAMETER - 1):
+        for x in range(PAINT_DOT_DIAMETER - 1):
+            pixelValue = patch[y, x]
+            if pixelValue == 0:
+                blackCount += 1
+            elif pixelValue == 255:
+                whiteCount += 1
+
+    # Return white on equal
+    if blackCount > whiteCount:
+        return 0
+    else:
+        return 1
 
 
 # Creates gcode file from every pixel in the image (assumes image is already correctly sized)
@@ -44,18 +51,23 @@ def generate_gcode_file(img):
         file.write("G90 ;\n")  # Absolute positioning mode
         file.write("G21 ;\n")  # Set units to mm
 
+        increment = PAINT_DOT_DIAMETER - 1
         y_counter = 0
-        for y_displacement in range(img.shape[0]):
+        for y_displacement in range(increment, img.shape[0], increment):
             file.write("G0 Y{} F{} ;\n".format(y_displacement, MOVEMENT_SPEED))
 
             # Compute range (prevent unnecessary movement to the other edge)
             if y_counter % 2 == 0:
-                rangeToUse = range(img.shape[1])
+                rangeToUse = range(increment, img.shape[1], increment)
             else:
-                rangeToUse = range(img.shape[1], 0, -1)
+                rangeToUse = range(img.shape[1], increment, -increment)
 
             for x_displacement in rangeToUse:
-                val = img[y_displacement, x_displacement]
+                patch_around_img = img[
+                    y_displacement - increment : y_displacement + increment,
+                    x_displacement - increment : x_displacement + increment,
+                ]
+                val = get_pixel_patch_value(patch_around_img)
                 if val == 0:  # Values are 255 or 0
                     file.write("G0 X{} F{} ;\n".format(x_displacement, MOVEMENT_SPEED))
                     # Mark a dot
@@ -67,10 +79,8 @@ def generate_gcode_file(img):
 
 
 img = cv2.imread("monkey.jpg")
-print(img.shape)
 
 resized_img = resize_image(img)
-print(resized_img.shape)
 
 _, black_white_img = cv2.threshold(
     cv2.cvtColor(resized_img, cv2.COLOR_BGR2GRAY),
@@ -78,9 +88,6 @@ _, black_white_img = cv2.threshold(
     255,
     cv2.THRESH_BINARY | cv2.THRESH_OTSU,
 )
-
-# downsampled_img = downsample_image(resized_img)
-# print(downsampled_img.shape)
 
 generate_gcode_file(black_white_img)
 
