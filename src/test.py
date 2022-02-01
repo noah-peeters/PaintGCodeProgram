@@ -1,7 +1,7 @@
 import math
 import cv2
 
-MAX_WORKING_LENGTH = 100  # Longest length of working area (mm)
+MAX_WORKING_LENGTH = 150  # Longest length of working area (mm)
 PAINT_DOT_DIAMETER = 3  # Diameter of paint dot; must be ODD (mm)
 MOVEMENT_SPEED = 1400  # Movement speed in mm/min (max is 1500)
 Z_AXIS_DOWN_POS = -40  # Z-axis down position (point on paper)
@@ -83,7 +83,7 @@ def generate_gcode_file(img):
         file.write("G28 ;\n")
 
 
-img = cv2.imread("monkey.jpg")
+img = cv2.imread("MonkeyLogo.jpg")
 
 resized_img = resize_image(img)
 
