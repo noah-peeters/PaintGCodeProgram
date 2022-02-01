@@ -5,7 +5,7 @@ MAX_WORKING_LENGTH = 100  # Longest length of working area (mm)
 PAINT_DOT_DIAMETER = 3  # Diameter of paint dot; must be ODD (mm)
 MOVEMENT_SPEED = 1400  # Movement speed in mm/min (max is 1500)
 Z_AXIS_DOWN_POS = -40  # Z-axis down position (point on paper)
-Z_AXIS_LIFT_UP = 10  # Z-axis lift up offset
+Z_AXIS_LIFT_UP = 2  # Z-axis lift up offset
 
 # Resize image so largest axis becomes MAX_WORKING_LENGTH
 def resize_image(img):
