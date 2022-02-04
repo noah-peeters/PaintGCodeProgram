@@ -4,9 +4,9 @@ import cv2
 MAX_WORKING_LENGTH = 200  # Longest length of working area (mm)
 PAINT_DOT_DIAMETER = 3  # Diameter of paint dot; must be ODD (mm)
 MOVEMENT_SPEED = 1400  # Movement speed in mm/min (max is 1500)
-Z_AXIS_DOWN_POS = -48.5  # Z-axis down position (point on paper)
+Z_AXIS_DOWN_POS = -49.5  # Z-axis down position (point on paper)
 Z_AXIS_LIFT_UP = 2  # Z-axis lift up offset
-GCODE_FILE_NAME = "Dog"
+GCODE_FILE_NAME = "MonkeyLogo"
 
 # Resize image so largest axis becomes MAX_WORKING_LENGTH
 def resize_image(img):
@@ -84,7 +84,7 @@ def generate_gcode_file(img):
         file.write("G28 ;\n")
 
 
-img = cv2.imread("dog.jpg")
+img = cv2.imread("MonkeyLogo.jpg")
 
 resized_img = resize_image(img)
 
@@ -97,7 +97,7 @@ _, black_white_img = cv2.threshold(
 
 generate_gcode_file(black_white_img)
 
-cv2.imshow("Image", img)
-cv2.imshow("Black & White Image", black_white_img)
-cv2.imshow("Resized Image", resized_img)
+# cv2.imshow("Image", img)
+# cv2.imshow("Black & White Image", black_white_img)
+# cv2.imshow("Resized Image", resized_img)
 cv2.waitKey(0)
