@@ -7,7 +7,7 @@ import PySide6.QtWidgets as qtw
 import src.ImageViewer as ImageViewer
 
 
-class CenterWidget(qtw.QWidget):
+class MainLayout(qtw.QWidget):
     def __init__(self):
         super().__init__()
 

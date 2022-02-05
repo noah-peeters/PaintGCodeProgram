@@ -8,12 +8,11 @@ import PySide6.QtWidgets as qtw
 import qt_material
 
 import src.QActionsSetup as qt_actions_setup
-import ImageViewer as ImageViewer
+import src.MainLayout as MainLayout
 import src.settings as settings
 
 
 class MainWindow(qtw.QMainWindow, qt_material.QtStyleTools):
-    loaded_image_names = []
     # Reference dir for image loading/export
     current_image_directory = os.path.expanduser("~")
     loaded_image = None
@@ -30,14 +29,14 @@ class MainWindow(qtw.QMainWindow, qt_material.QtStyleTools):
         self.resize(geometry.width(), geometry.height())
 
         qt_actions_setup.setup_actions()
-        self.setCentralWidget(ImageViewer.MainLayout())
+        self.setCentralWidget(MainLayout.MainLayout())
 
         # Stylesheet
         # TODO: Make setting toggle that saves stylesheet
         self.apply_stylesheet(self, "dark_blue.xml")
 
-    # Clear all loaded images
-    def clear_all_images(self):
+    # Clear loaded image
+    def clear_loaded_image(self):
         if self.loaded_image != None:
             # Ask confirmation (if there is an image loaded)
             reply = qtw.QMessageBox.question(
@@ -61,6 +60,14 @@ class MainWindow(qtw.QMainWindow, qt_material.QtStyleTools):
     # TODO: Allow save to file
     def save_project_to_file(self):
         print("Saving project to file.")
+    
+    # TODO: Open dialog for gcode generation/saving
+    def generate_gcode(self):
+        print("Opening dialog")
+    
+    # TODO: Load image from path
+    def load_image_from_path(self,path):
+        print("Load image from path")
 
     # Shutdown all currently running processes, cleanup and close window
     def shutdown_application(self):

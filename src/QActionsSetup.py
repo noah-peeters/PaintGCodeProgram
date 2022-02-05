@@ -11,10 +11,10 @@ def setup_actions():
     mainWindow = settings.globalVars["MainWindow"]
     # Load images action; user selects images from a QFileDialog
     def load_image_from_file():
-        new_loaded_images, _ = qtw.QFileDialog.getOpenFileName(
+        image_path, _ = qtw.QFileDialog.getOpenFileName(
             mainWindow, "Select image to load.", mainWindow.current_image_directory
         )
-        mainWindow.set_new_loaded_image_files(new_loaded_images)
+        mainWindow.load_image_from_path(image_path)
 
     menubar = mainWindow.menuBar()
 
@@ -30,7 +30,7 @@ def setup_actions():
     clear_images = qtg.QAction("&Clear image", mainWindow)
     clear_images.setShortcut("Ctrl+F")
     clear_images.setStatusTip("Clear loaded image.")
-    clear_images.triggered.connect(mainWindow.clear_all_images)
+    clear_images.triggered.connect(mainWindow.clear_loaded_image)
     file_menu.addAction(clear_images)
 
     save_file = qtg.QAction("&Save project", mainWindow)
