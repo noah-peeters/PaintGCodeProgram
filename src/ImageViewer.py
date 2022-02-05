@@ -55,7 +55,7 @@ class ImageViewer(qtw.QGraphicsView):
 
     # Change displayed image
     def set_displayed_image(self, image):
-        if image != None:
+        if image is not None:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             # Convert np RGB array to QImage
             # src: https://stackoverflow.com/questions/34232632/convert-python-opencv-image-numpy-array-to-pyqt-qpixmap-image

@@ -3,7 +3,7 @@
     It is the "root display".
 """
 import os
-import PySide6.QtCore as qtc
+import cv2
 import PySide6.QtWidgets as qtw
 import qt_material
 
@@ -26,7 +26,6 @@ class MainWindow(qtw.QMainWindow, qt_material.QtStyleTools):
         self.setWindowTitle("GCode generator")
         geometry = self.screen().availableGeometry()
         self.setMinimumSize(int(geometry.width() * 0.6), int(geometry.height() * 0.6))
-        self.resize(geometry.width(), geometry.height())
 
         qt_actions_setup.setup_actions()
         self.setCentralWidget(MainLayout.MainLayout())
@@ -60,14 +59,15 @@ class MainWindow(qtw.QMainWindow, qt_material.QtStyleTools):
     # TODO: Allow save to file
     def save_project_to_file(self):
         print("Saving project to file.")
-    
+
     # TODO: Open dialog for gcode generation/saving
     def generate_gcode(self):
         print("Opening dialog")
-    
+
     # TODO: Load image from path
-    def load_image_from_path(self,path):
-        print("Load image from path")
+    def load_image_from_path(self, path):
+        self.loaded_image = cv2.imread(path)
+        self.centralWidget().imageViewer.set_displayed_image(self.loaded_image)
 
     # Shutdown all currently running processes, cleanup and close window
     def shutdown_application(self):
