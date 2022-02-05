@@ -48,7 +48,7 @@ def setup_actions():
     processing_menu = menubar.addMenu("&Processing")
 
     generate_gcode = qtg.QAction("&Generate G-code", mainWindow)
-    generate_gcode.setShortcut("Ctrl+A")
+    generate_gcode.setShortcut("Ctrl+G")
     generate_gcode.setStatusTip("Generate G-code for image.")
     generate_gcode.triggered.connect(mainWindow.generate_gcode)
     processing_menu.addAction(generate_gcode)

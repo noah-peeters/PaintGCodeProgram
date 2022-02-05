@@ -72,6 +72,7 @@ class MainWindow(qtw.QMainWindow, qt_material.QtStyleTools):
             newImage = cv2.imread(path)
         except Exception as e:
             stackTrace = e
+        
         if newImage is not None:
             self.loaded_image = newImage
             self.centralWidget().imageViewer.set_displayed_image(self.loaded_image)
