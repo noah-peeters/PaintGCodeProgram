@@ -8,6 +8,9 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
 import src.MainWindow.MainWindow as MainWindow
+import src.settings as settings
+
+settings.init()
 
 if __name__ == "__main__":
     app = qtw.QApplication(sys.argv)

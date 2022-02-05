@@ -9,33 +9,31 @@ import qt_material
 
 import src.QActionsSetup as qt_actions_setup
 import src.MainLayout.MainLayout as MainLayout
+import src.settings as settings
 
-class Window(qtw.QMainWindow, qt_material.QtStyleTools):
+
+class MainWindow(qtw.QMainWindow, qt_material.QtStyleTools):
     loaded_image_names = []
     # Reference dir for image loading/export
     current_image_directory = os.path.expanduser("~")
 
     def __init__(self):
         super().__init__()
+        settings.globalVars["MainWindow"] = self
 
         self.statusbar_msg_display_time = 2000  # (ms)
 
         self.setWindowTitle("ChimpStackr")
         geometry = self.screen().availableGeometry()
         self.setMinimumSize(int(geometry.width() * 0.6), int(geometry.height() * 0.6))
-        self.resize(geometry.width(),geometry.height())
+        self.resize(geometry.width(), geometry.height())
 
-        # Setup actions
         qt_actions_setup.setup_actions()
-        # Set center widget
-        self.setCentralWidget(MainLayout.CenterWidget())
+        self.setCentralWidget(MainLayout())
 
         # Stylesheet
         # TODO: Make setting toggle that saves stylesheet
         self.apply_stylesheet(self, "dark_blue.xml")
-
-        # Threadpool for multi-threading (prevent UI freezing)
-        self.threadpool = qtc.QThreadPool()
 
     # Export output image to file on disk
     def export_output_image(self):
