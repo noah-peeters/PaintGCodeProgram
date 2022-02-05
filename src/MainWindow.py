@@ -8,7 +8,7 @@ import PySide6.QtWidgets as qtw
 import qt_material
 
 import src.QActionsSetup as qt_actions_setup
-import src.MainLayout.MainLayout as MainLayout
+import src.MainLayout as MainLayout
 import src.settings as settings
 
 
@@ -29,7 +29,7 @@ class MainWindow(qtw.QMainWindow, qt_material.QtStyleTools):
         self.resize(geometry.width(), geometry.height())
 
         qt_actions_setup.setup_actions()
-        self.setCentralWidget(MainLayout())
+        self.setCentralWidget(MainLayout.MainLayout())
 
         # Stylesheet
         # TODO: Make setting toggle that saves stylesheet
