@@ -16,7 +16,7 @@ class GenerateDots:
         "Z_AxisLiftUp": 2,
     }
 
-    def __init__():
+    def __init__(self):
         print("init")
 
     # Resize image so largest axis becomes MAX_WORKING_LENGTH
