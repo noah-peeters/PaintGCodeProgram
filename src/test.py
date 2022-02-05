@@ -1,12 +1,13 @@
 import math
 import cv2
 
-MAX_WORKING_LENGTH = 230  # Longest length of working area (mm)
+MAX_WORKING_LENGTH = 350  # Longest length of working area (mm)
 PAINT_DOT_DIAMETER = 3  # Diameter of paint dot; must be ODD (mm)
-MOVEMENT_SPEED = 1400  # Movement speed in mm/min (max is 1500)
+XY_MOVEMENT_SPEED = 3000  # Movement speed in mm/min
+Z_MOVEMENT_SPEED = 1700
 Z_AXIS_DOWN_POS = -49.5  # Z-axis down position (point on paper)
 Z_AXIS_LIFT_UP = 2  # Z-axis lift up offset
-GCODE_FILE_NAME = "Dog"
+GCODE_FILE_NAME = "MonkeyLogo"
 
 # Resize image so largest axis becomes MAX_WORKING_LENGTH
 def resize_image(img):
@@ -56,7 +57,7 @@ def generate_gcode_file(img):
         increment = PAINT_DOT_DIAMETER - 1
         y_counter = 0
         for y_displacement in range(increment, img.shape[0], increment):
-            file.write("G0 Y{} F{} ;\n".format(y_displacement, MOVEMENT_SPEED))
+            file.write("G0 Y{} F{} ;\n".format(y_displacement, XY_MOVEMENT_SPEED))
 
             # Compute range (prevent unnecessary movement to the other edge)
             if y_counter % 2 == 0:
@@ -71,12 +72,16 @@ def generate_gcode_file(img):
                 ]
                 val = get_pixel_patch_value(patch_around_img)
                 if val == 0:  # Values are 255 or 0
-                    file.write("G0 X{} F{} ;\n".format(x_displacement, MOVEMENT_SPEED))
+                    file.write(
+                        "G0 X{} F{} ;\n".format(x_displacement, XY_MOVEMENT_SPEED)
+                    )
                     # Mark a dot
-                    file.write("G1 Z{} F{} ;\n".format(Z_AXIS_DOWN_POS, MOVEMENT_SPEED))
+                    file.write(
+                        "G1 Z{} F{} ;\n".format(Z_AXIS_DOWN_POS, Z_MOVEMENT_SPEED)
+                    )
                     file.write(
                         "G1 Z{} F{} ;\n".format(
-                            Z_AXIS_DOWN_POS + Z_AXIS_LIFT_UP, MOVEMENT_SPEED
+                            Z_AXIS_DOWN_POS + Z_AXIS_LIFT_UP, Z_MOVEMENT_SPEED
                         )
                     )
 
@@ -84,7 +89,7 @@ def generate_gcode_file(img):
         file.write("G28 ;\n")
 
 
-img = cv2.imread("dog.jpg")
+img = cv2.imread("MonkeyLogo.jpg")
 
 resized_img = resize_image(img)
 
