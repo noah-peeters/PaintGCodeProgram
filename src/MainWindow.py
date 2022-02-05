@@ -64,10 +64,29 @@ class MainWindow(qtw.QMainWindow, qt_material.QtStyleTools):
     def generate_gcode(self):
         print("Opening dialog")
 
-    # TODO: Load image from path
+    # TODO: Support for "svg" format
     def load_image_from_path(self, path):
-        self.loaded_image = cv2.imread(path)
-        self.centralWidget().imageViewer.set_displayed_image(self.loaded_image)
+        newImage = None
+        stackTrace = None
+        try:
+            newImage = cv2.imread(path)
+        except Exception as e:
+            stackTrace = e
+        if newImage is not None:
+            self.loaded_image = newImage
+            self.centralWidget().imageViewer.set_displayed_image(self.loaded_image)
+        else:
+            # Display Error message
+            msg = qtw.QMessageBox(self)
+            msg.setStandardButtons(qtw.QMessageBox.Ok)
+            msg.setIcon(qtw.QMessageBox.Critical)
+            msg.setWindowTitle("Image loading failed")
+            msg.setText(
+                "Failed to load image!\nPlease ensure the image's format is supported.\n"
+            )
+            if stackTrace != None:
+                msg.setDetailedText(stackTrace)
+            msg.show()
 
     # Shutdown all currently running processes, cleanup and close window
     def shutdown_application(self):
