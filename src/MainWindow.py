@@ -10,6 +10,7 @@ import qt_material
 import src.QActionsSetup as qt_actions_setup
 import src.MainLayout as MainLayout
 import src.settings as settings
+import src.GCodeDialog as GCodeDialog
 
 
 class MainWindow(qtw.QMainWindow, qt_material.QtStyleTools):
@@ -29,10 +30,6 @@ class MainWindow(qtw.QMainWindow, qt_material.QtStyleTools):
 
         qt_actions_setup.setup_actions()
         self.setCentralWidget(MainLayout.MainLayout())
-
-        # Stylesheet
-        # TODO: Make setting toggle that saves stylesheet
-        self.apply_stylesheet(self, "dark_blue.xml")
 
     # Clear loaded image
     def clear_loaded_image(self):
@@ -62,7 +59,8 @@ class MainWindow(qtw.QMainWindow, qt_material.QtStyleTools):
 
     # TODO: Open dialog for gcode generation/saving
     def generate_gcode(self):
-        print("Opening dialog")
+        print("Opening G-code generation dialog")
+        GCodeDialog.Dialog().exec()
 
     # TODO: Support for "svg" format
     def load_image_from_path(self, path):
@@ -72,7 +70,7 @@ class MainWindow(qtw.QMainWindow, qt_material.QtStyleTools):
             newImage = cv2.imread(path)
         except Exception as e:
             stackTrace = e
-        
+
         if newImage is not None:
             self.loaded_image = newImage
             self.centralWidget().imageViewer.set_displayed_image(self.loaded_image)

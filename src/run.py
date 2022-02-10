@@ -1,5 +1,6 @@
-import os, sys, tempfile
+import os, sys
 import PySide6.QtWidgets as qtw
+import qt_material
 
 # Hack to allow imports from src/
 # src: https://codeolives.com/2020/01/10/python-reference-module-in-parent-directory/
@@ -15,6 +16,8 @@ settings.init()
 if __name__ == "__main__":
     app = qtw.QApplication(sys.argv)
     window = MainWindow.MainWindow()
+
+    qt_material.apply_stylesheet(app, theme="dark_cyan.xml")
 
     window.show()
     sys.exit(app.exec())
